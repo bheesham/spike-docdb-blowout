@@ -41,13 +41,22 @@ class Mongo:
         )
 
     def search(self, query: UserFilterParams) -> list[User]:
-        params: dict[str, Any] = defaultdict(lambda: defaultdict(dict))
-        if query.username:
-            params["username"] = query.username
-        params["connections"]["$elemMatch"]["is_verified"] = query.is_verified
-        if query.connection_kind:
-            params["connections"]["$elemMatch"]["kind"] = query.connection_kind
-        return self.client.cis.users.find(params).to_list()
+        # Searching for a specific user.
+        if query.identity_name and query.value:
+            params = {
+                f"identities.{query.identity_name}.value": query.value,
+            }
+            return self.client.cis.users.find(params).to_list()
+        # Where users have an identity that's active.
+        if query.identity_name:
+            params = {
+                f"identities.{query.identity_name}.value": {
+                    "$exists": True,
+                    "$nin": ["", None],
+                },
+            }
+            return self.client.cis.users.find(params).to_list()
+        return []
 
     def health(self) -> bool:
         if self.client.nodes:
