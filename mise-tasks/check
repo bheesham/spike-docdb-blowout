@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+#MISE description="The holy grail of iterative development (fmt, typecheck, lint)"
+#MISE alias="c"
+
+black spike_docdb_blowout
+mypy spike_docdb_blowout
+pylint spike_docdb_blowout
