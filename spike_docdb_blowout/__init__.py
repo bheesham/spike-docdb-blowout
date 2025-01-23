@@ -1,5 +1,6 @@
 import os
 from typing import Annotated, Optional
+from fastapi import FastAPI, HTTPException, Query
 from spike_docdb_blowout.models import *
 from spike_docdb_blowout import docdb
 
@@ -53,4 +54,4 @@ def health() -> None:
     try:
         client.health()
     except docdb.Error as exc:
-        raise HTTPException(status_code=500, detail=str(exc))
+        raise HTTPException(status_code=500, detail=str(exc)) from exc

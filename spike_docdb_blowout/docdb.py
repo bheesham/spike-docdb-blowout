@@ -2,7 +2,7 @@ from collections import defaultdict
 from typing import Any, Optional, Protocol
 import logging
 from pymongo import MongoClient
-import pymongo.errors
+from google.cloud import bigtable  # type: ignore
 from spike_docdb_blowout.models import *
 
 
