@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+#MISE description="Runs Google BigTable"
+#MISE alias="b"
+docker run -p 127.0.0.1:8086:8086 --rm -ti google/cloud-sdk gcloud beta emulators bigtable start --host-port=0.0.0.0:8086
