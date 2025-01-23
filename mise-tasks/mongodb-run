@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 #MISE description="Runs MongoDB Atlas"
 #MISE alias="m"
-docker run --rm -p 27017:27017 -e DO_NOT_TRACK=1 mongodb/mongodb-atlas-local
+docker run --rm -ti -p 127.0.0.1:27017:27017 -e DO_NOT_TRACK=1 mongodb/mongodb-atlas-local
