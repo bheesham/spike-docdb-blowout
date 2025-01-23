@@ -1,0 +1,10 @@
+[tools]
+mongosh = "latest"
+poetry = "2.0.1"
+python = "3.13"
+
+[env]
+_.python.venv = { path = ".venv", create = true }
+
+DRIVER = "mongodb"
+MONGODB_URI = "mongodb://127.0.0.1:27017/cis?directConnection=true"
