@@ -1,4 +1,3 @@
-from collections import defaultdict
 from typing import Any, Optional, Protocol
 import datetime
 import json
@@ -43,6 +42,7 @@ class Mongo:
         )
 
     def search(self, query: UserFilterParams) -> list[User]:
+        params: dict[str, Any]
         # Searching for a specific user.
         if query.identity_name and query.value:
             params = {
@@ -75,7 +75,9 @@ class BigTable:
         self.client = bigtable.client.Client()
         self.instance = self.client.instance("cis")
         self.users = self.instance.table("users")
-        raise NotImplementedError("We'd need to re-think our schema with BigTable, something we're not prepared to do at this time.")
+        raise NotImplementedError(
+            "We'd need to re-think our schema with BigTable, something we're not prepared to do at this time."
+        )
 
     def get(self, username: str) -> Optional[User]:
         raise NotImplementedError("BigTable get")
@@ -86,9 +88,11 @@ class BigTable:
         row = self.users.direct_row(user_document.pop("username"))
         for column_family, value in user_document.items():
             match value:
-                case dict(v):
-                    row.set_cell(column_family, column_family, json.dumps(value), timestamp)
-                case v:
+                case dict(_):
+                    row.set_cell(
+                        column_family, column_family, json.dumps(value), timestamp
+                    )
+                case _:
                     row.set_cell(column_family, column_family, value, timestamp)
 
     def search(self, query: UserFilterParams) -> list[User]:
