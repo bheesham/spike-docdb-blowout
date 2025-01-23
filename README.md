@@ -15,7 +15,7 @@ mise run m
 fastapi dev spike_docdb_blowout
 ```
 
-## Requirements:
+## Requirements
 
 We use Mise to manage Python and Poetry, and subsequently Poetry to manage our
 Python dependencies.
