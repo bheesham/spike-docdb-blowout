@@ -28,16 +28,17 @@ class HRInformation(BaseModel):
     managers_primary_work_email: Optional[str]
 
 
-class ConnectionKind(enum.StrEnum):
-    GitHub = enum.auto()
-    FirefoxAccount = enum.auto()
-    LDAP = enum.auto()
+class GitHubIdV3(BaseModel):
+    value: Optional[str]
 
 
-class Connection(BaseModel):
-    kind: ConnectionKind
-    username: str
-    is_verified: bool
+class FirefoxAccountId(BaseModel):
+    value: Optional[str]
+
+
+class Identities(BaseModel):
+    github_id_v3: Optional[GitHubIdV3] = None
+    firefox_accounts_id: Optional[FirefoxAccountId] = None
 
 
 class User(BaseModel):
@@ -45,10 +46,14 @@ class User(BaseModel):
     email: str
     access_information: AccessInformation
     hris: HRInformation
-    connections: list[Connection]
+    identities: Identities
+
+
+class IdentityKind(enum.StrEnum):
+    GitHub = "github_id_v3"
+    FirefoxAccount = "firefox_accounts_id"
 
 
 class UserFilterParams(BaseModel):
-    username: Optional[str] = None
-    connection_kind: Optional[ConnectionKind] = None
-    is_verified: Optional[bool] = False
+    identity_name: IdentityKind
+    value: Optional[str] = None
