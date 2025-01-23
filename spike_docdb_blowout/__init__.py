@@ -4,7 +4,14 @@ from fastapi import FastAPI, HTTPException, Query
 from spike_docdb_blowout.models import *
 from spike_docdb_blowout import docdb
 
-from fastapi import FastAPI, HTTPException, Query
+
+class Error(Exception):
+    pass
+
+
+class Configuration(Error):
+    pass
+
 
 app = FastAPI(
     title="Spike: DocDB Blowout",
@@ -13,10 +20,20 @@ app = FastAPI(
 
 client: docdb.DocDB
 
-if os.environ["DRIVER"] == "mongodb":
-    client = docdb.Mongo(os.environ["MONGODB_URI"])
-else:
-    raise ValueError("Invalid docdb driver")
+
+try:
+    if os.environ["DRIVER"] == "mongodb":
+        try:
+            client = docdb.Mongo(os.environ["MONGODB_URI"])
+        except KeyError as exc:
+            raise Configuration("MONGODB_URI environment variable not found") from exc
+    elif os.environ["DRIVER"] == "bigtable":
+        client = docdb.BigTable()
+    else:
+        raise Configuration("Invalid docdb driver")
+except KeyError as exc:
+    raise Configuration("DRIVER environment variable not found") from exc
+
 
 @app.get(
     "/users",

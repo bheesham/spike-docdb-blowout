@@ -1,5 +1,7 @@
 from collections import defaultdict
 from typing import Any, Optional, Protocol
+import datetime
+import json
 import logging
 from pymongo import MongoClient
 from google.cloud import bigtable  # type: ignore
@@ -62,3 +64,35 @@ class Mongo:
         if self.client.nodes:
             return True
         raise NotConnected("Could not connect to Mongo")
+
+
+class BigTable:
+    client: bigtable.client.Client
+    instance: bigtable.instance.Instance
+    users: bigtable.table.Table
+
+    def __init__(self) -> None:
+        self.client = bigtable.client.Client()
+        self.instance = self.client.instance("cis")
+        self.users = self.instance.table("users")
+        raise NotImplementedError("We'd need to re-think our schema with BigTable, something we're not prepared to do at this time.")
+
+    def get(self, username: str) -> Optional[User]:
+        raise NotImplementedError("BigTable get")
+
+    def update(self, user: User) -> None:
+        timestamp = datetime.datetime.utcnow()
+        user_document = user.dict()
+        row = self.users.direct_row(user_document.pop("username"))
+        for column_family, value in user_document.items():
+            match value:
+                case dict(v):
+                    row.set_cell(column_family, column_family, json.dumps(value), timestamp)
+                case v:
+                    row.set_cell(column_family, column_family, value, timestamp)
+
+    def search(self, query: UserFilterParams) -> list[User]:
+        raise NotImplementedError("BigTable search")
+
+    def health(self) -> bool:
+        raise NotImplementedError("BigTable health")

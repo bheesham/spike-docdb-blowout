@@ -31,5 +31,6 @@ disable = """
     missing-class-docstring,
     missing-function-docstring,
     invalid-name,
-    wildcard-import
+    wildcard-import,
+    unused-wildcard-import
 """

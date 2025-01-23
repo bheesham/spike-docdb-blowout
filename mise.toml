@@ -8,3 +8,4 @@ _.python.venv = { path = ".venv", create = true }
 
 DRIVER = "mongodb"
 MONGODB_URI = "mongodb://127.0.0.1:27017/cis?directConnection=true"
+BIGTABLE_EMULATOR_HOST = "localhost:8086"
